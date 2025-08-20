@@ -1092,10 +1092,11 @@ bool DeviceManager_VK::CreateDevice()
     if (!m_DeviceParams.headlessDevice)
     {
         // Need to adjust the swap chain format before creating the device because it affects physical device selection
-        if (m_DeviceParams.swapChainFormat == nvrhi::Format::SRGBA8_UNORM)
+        // To align with android, disable this conversion to avoid using unsupported BGRA layout
+        /*if (m_DeviceParams.swapChainFormat == nvrhi::Format::SRGBA8_UNORM)
             m_DeviceParams.swapChainFormat = nvrhi::Format::SBGRA8_UNORM;
         else if (m_DeviceParams.swapChainFormat == nvrhi::Format::RGBA8_UNORM)
-            m_DeviceParams.swapChainFormat = nvrhi::Format::BGRA8_UNORM;
+            m_DeviceParams.swapChainFormat = nvrhi::Format::BGRA8_UNORM;*/
 
         CHECK(createWindowSurface())
     }
