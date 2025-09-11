@@ -104,6 +104,8 @@ namespace donut::engine
         // Creates a shader from binary file.
         nvrhi::ShaderHandle CreateShader(const char* fileName, const char* entryName, const std::vector<ShaderMacro>* pDefines, const nvrhi::ShaderDesc& desc);
 
+        nvrhi::ShaderHandle CreateShader(const char* fileName, const char* entryName, const std::vector<ShaderMacro>* pDefines, const nvrhi::ShaderType shaderType);
+
         // Creates a shader library from binary file.
         nvrhi::ShaderLibraryHandle CreateShaderLibrary(const char* fileName, const std::vector<ShaderMacro>* pDefines);
 
@@ -122,6 +124,8 @@ namespace donut::engine
         // Tries to create a shader from one of the platform-specific bytecode arrays (calling CreateStaticPlatformShader).
         // If that fails (e.g. there is no static bytecode), creates a shader from the filesystem binary file (calling CreateShader).
         nvrhi::ShaderHandle CreateAutoShader(const char* fileName, const char* entryName, StaticShader dxbc, StaticShader dxil, StaticShader spirv, const std::vector<ShaderMacro>* pDefines, const nvrhi::ShaderDesc& desc);
+
+        nvrhi::ShaderHandle CreateAutoShader(const char* fileName, const char* entryName, StaticShader dxbc, StaticShader dxil, StaticShader spirv, const std::vector<ShaderMacro>* pDefines, const nvrhi::ShaderType shaderType);
 
         // Tries to create a shader library from one of the platform-specific bytecode arrays (calling CreateStaticPlatformShaderLibrary).
         // If that fails (e.g. there is no static bytecode), creates a shader library from the filesystem binary file (calling CreateShaderLibrary).

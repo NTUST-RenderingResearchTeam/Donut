@@ -47,9 +47,12 @@ freely, subject to the following restrictions:
    distribution.
 */
 
+#include <sstream>
+#include <iostream>
 #include <string>
 #include <queue>
 #include <unordered_set>
+#include <memory>
 
 #include <donut/app/DeviceManager.h>
 
@@ -263,7 +266,13 @@ private:
 
     bool m_BufferDeviceAddressSupported = false;
 
-    vk::DynamicLoader m_dynamicLoader;
+#if VK_HEADER_VERSION >= 301
+    typedef vk::detail::DynamicLoader VulkanDynamicLoader;
+#else
+    typedef vk::DynamicLoader VulkanDynamicLoader;
+#endif
+
+    std::unique_ptr<VulkanDynamicLoader> m_dynamicLoader;
 
 private:
     static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(
@@ -1029,8 +1038,10 @@ bool DeviceManager_VK::CreateInstanceInternal()
         enabledExtensions.layers.insert("VK_LAYER_KHRONOS_validation");
     }
 
+    m_dynamicLoader = std::make_unique<VulkanDynamicLoader>();
+
     PFN_vkGetInstanceProcAddr vkGetInstanceProcAddr =
-        m_dynamicLoader.getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
+        m_dynamicLoader->getProcAddress<PFN_vkGetInstanceProcAddr>("vkGetInstanceProcAddr");
     VULKAN_HPP_DEFAULT_DISPATCHER.init(vkGetInstanceProcAddr);
 
     return createInstance();
