@@ -36,7 +36,8 @@ target_include_directories(donut_engine PUBLIC include)
 
 target_link_libraries(donut_engine donut_core nvrhi jsoncpp_static stb tinyexr cgltf ShaderMakeBlob)
 
-add_dependencies(donut_engine donut_shaders)
+# We don't compile shaders here
+# add_dependencies(donut_engine donut_shaders)
 
 if (DONUT_WITH_TASKFLOW)
     target_link_libraries(donut_engine taskflow)

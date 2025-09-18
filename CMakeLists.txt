@@ -73,7 +73,8 @@ if (DONUT_WITH_NVRHI)
 
     set(DONUT_SHADER_INCLUDE_DIR ${CMAKE_CURRENT_LIST_DIR}/include CACHE PATH "" FORCE)
     
-    add_subdirectory(shaders)
+    # We don't compile shaders here
+    #add_subdirectory(shaders)
 endif()
 
 include(donut-core.cmake)

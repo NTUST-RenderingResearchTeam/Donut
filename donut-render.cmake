@@ -30,7 +30,8 @@ add_library(donut_render STATIC EXCLUDE_FROM_ALL ${donut_render_src})
 target_include_directories(donut_render PUBLIC include)
 target_link_libraries(donut_render donut_core donut_engine)
 
-add_dependencies(donut_render donut_shaders)
+# We don't compile shaders here
+# add_dependencies(donut_render donut_shaders)
 
 set_target_properties(donut_render PROPERTIES FOLDER Donut)
 
