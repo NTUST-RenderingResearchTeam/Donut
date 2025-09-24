@@ -161,6 +161,9 @@ namespace donut::vfs
         void mount(const std::filesystem::path& path, const std::filesystem::path& nativePath);
         bool unmount(const std::filesystem::path& path);
 
+        // Convert virtual path to real system path
+        std::filesystem::path getRealPath(const std::filesystem::path& virtualPath);
+
 		bool folderExists(const std::filesystem::path& name) override;
         bool fileExists(const std::filesystem::path& name) override;
         std::shared_ptr<IBlob> readFile(const std::filesystem::path& name) override;

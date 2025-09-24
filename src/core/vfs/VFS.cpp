@@ -318,6 +318,32 @@ bool RootFileSystem::unmount(const std::filesystem::path& path)
     return false;
 }
 
+std::filesystem::path RootFileSystem::getRealPath(const std::filesystem::path& virtualPath)
+{
+    std::filesystem::path relativePath;
+    IFileSystem* fs = nullptr;
+
+    if (findMountPoint(virtualPath, &relativePath, &fs))
+    {
+        // Try to get the real path from RelativeFileSystem
+        RelativeFileSystem* relativeFS = dynamic_cast<RelativeFileSystem*>(fs);
+        if (relativeFS)
+        {
+            // Combine the base path from RelativeFileSystem with the relative path
+            std::filesystem::path realPath = relativeFS->GetBasePath() / relativePath;
+            // Return the absolute path
+            return std::filesystem::absolute(realPath);
+        }
+
+        // If it's not a RelativeFileSystem, return the relative path as absolute
+        // (this handles cases where the filesystem might already be absolute)
+        return std::filesystem::absolute(relativePath);
+    }
+
+    // No mount point found, return empty path
+    return std::filesystem::path{};
+}
+
 bool RootFileSystem::findMountPoint(const std::filesystem::path& path, std::filesystem::path* pRelativePath, IFileSystem** ppFS)
 {
     std::string spath = path.lexically_normal().generic_string();
