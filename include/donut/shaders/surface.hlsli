@@ -36,6 +36,7 @@ struct MaterialSample
     float3 baseColor; // native in metal-rough, derived in spec-gloss
     float metalness; // native in metal-rough, derived in spec-gloss
     float transmission;
+    float3 lightmap;
     bool hasMetalRoughParams; // indicates that 'baseColor' and 'metalness' are valid
 };
 
@@ -53,6 +54,7 @@ MaterialSample DefaultMaterialSample()
     result.baseColor = 0;
     result.metalness = 0;
     result.transmission = 0;
+    result.lightmap = 0;
     result.hasMetalRoughParams = false;
     return result;
 }

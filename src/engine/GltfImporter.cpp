@@ -410,6 +410,8 @@ bool GltfImporter::Load(
         matinfo->alphaCutoff = material.alpha_cutoff;
         matinfo->doubleSided = material.double_sided;
 
+        matinfo->lightmapTexture = load_texture(material.lightmap_texture.texture, true);
+
         switch (material.alpha_mode)
         {
         case cgltf_alpha_mode_opaque: matinfo->domain = useTransmission ? MaterialDomain::Transmissive : MaterialDomain::Opaque; break;
@@ -466,6 +468,7 @@ bool GltfImporter::Load(
     buffers->normalData.resize(totalVertices);
     buffers->tangentData.resize(totalVertices);
     buffers->texcoord1Data.resize(totalVertices);
+    buffers->texcoord2Data.resize(totalVertices);
     if (hasJoints)
     {
         // Allocate joint/weight arrays for all the vertices in the model.
@@ -516,7 +519,8 @@ bool GltfImporter::Load(
             const cgltf_accessor* positions = nullptr;
             const cgltf_accessor* normals = nullptr;
             const cgltf_accessor* tangents = nullptr;
-            const cgltf_accessor* texcoords = nullptr;
+            const cgltf_accessor* texcoords0 = nullptr;
+            const cgltf_accessor* texcoords1 = nullptr;
             const cgltf_accessor* joint_weights = nullptr;
             const cgltf_accessor* joint_indices = nullptr;
             
@@ -545,7 +549,9 @@ bool GltfImporter::Load(
                     assert(attr.data->type == cgltf_type_vec2);
                     assert(attr.data->component_type == cgltf_component_type_r_32f);
                     if (attr.index == 0)
-                        texcoords = attr.data;
+                        texcoords0 = attr.data;
+                    else if (attr.index == 1)
+                        texcoords1 = attr.data;
                     break;
                 case cgltf_attribute_type_joints:
                     assert(attr.data->type == cgltf_type_vec4);
@@ -676,14 +682,14 @@ bool GltfImporter::Load(
                 }
             }
 
-            if (texcoords)
+            if (texcoords0)
             {
-                assert(texcoords->count == positions->count);
+                assert(texcoords0->count == positions->count);
 
-                auto [texcoordSrc, texcoordStride] = cgltf_buffer_iterator(texcoords, sizeof(float) * 2);
+                auto [texcoordSrc, texcoordStride] = cgltf_buffer_iterator(texcoords0, sizeof(float) * 2);
                 float2* texcoordDst = buffers->texcoord1Data.data() + totalVertices;
 
-                for (size_t v_idx = 0; v_idx < texcoords->count; v_idx++)
+                for (size_t v_idx = 0; v_idx < texcoords0->count; v_idx++)
                 {
                     *texcoordDst = (const float*)texcoordSrc;
 
@@ -701,10 +707,35 @@ bool GltfImporter::Load(
                 }
             }
 
-            if (normals && texcoords && (!tangents || c_ForceRebuildTangents))
+            if (texcoords1)
+            {
+                assert(texcoords1->count == positions->count);
+
+                auto [texcoordSrc, texcoordStride] = cgltf_buffer_iterator(texcoords1, sizeof(float) * 2);
+                float2* texcoordDst = buffers->texcoord2Data.data() + totalVertices;
+
+                for (size_t v_idx = 0; v_idx < texcoords1->count; v_idx++)
+                {
+                    *texcoordDst = (const float*)texcoordSrc;
+
+                    texcoordSrc += texcoordStride;
+                    ++texcoordDst;
+                }
+            }
+            else
+            {
+                float2* texcoordDst = buffers->texcoord2Data.data() + totalVertices;
+                for (size_t v_idx = 0; v_idx < positions->count; v_idx++)
+                {
+                    *texcoordDst = float2(0.f);
+                    ++texcoordDst;
+                }
+            }
+
+            if (normals && texcoords0 && (!tangents || c_ForceRebuildTangents))
             {
                 auto [positionSrc, positionStride] = cgltf_buffer_iterator(positions, sizeof(float) * 3);
-                auto [texcoordSrc, texcoordStride] = cgltf_buffer_iterator(texcoords, sizeof(float) * 2);
+                auto [texcoord0Src, texcoord0Stride] = cgltf_buffer_iterator(texcoords0, sizeof(float) * 2);
                 auto [normalSrc, normalStride] = cgltf_buffer_iterator(normals, sizeof(float) * 3);
                 const uint32_t* indexSrc = buffers->indexData.data() + totalIndices;
 
@@ -723,9 +754,9 @@ bool GltfImporter::Load(
                     float3 p1 = (const float*)(positionSrc + positionStride * tri.y);
                     float3 p2 = (const float*)(positionSrc + positionStride * tri.z);
 
-                    float2 t0 = (const float*)(texcoordSrc + texcoordStride * tri.x);
-                    float2 t1 = (const float*)(texcoordSrc + texcoordStride * tri.y);
-                    float2 t2 = (const float*)(texcoordSrc + texcoordStride * tri.z);
+                    float2 t0 = (const float*)(texcoord0Src + texcoord0Stride * tri.x);
+                    float2 t1 = (const float*)(texcoord0Src + texcoord0Stride * tri.y);
+                    float2 t2 = (const float*)(texcoord0Src + texcoord0Stride * tri.z);
 
                     float3 dPds = p1 - p0;
                     float3 dPdt = p2 - p0;

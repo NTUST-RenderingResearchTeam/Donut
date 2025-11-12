@@ -115,6 +115,7 @@ namespace donut::engine
         std::shared_ptr<LoadedTexture> baseOrDiffuseTexture; // metal-rough: base color; spec-gloss: diffuse color; .a = opacity (both modes)
         std::shared_ptr<LoadedTexture> metalRoughOrSpecularTexture; // metal-rough: ORM map; spec-gloss: specular color, .a = glossiness
         std::shared_ptr<LoadedTexture> normalTexture;
+        std::shared_ptr<LoadedTexture> lightmapTexture;
         std::shared_ptr<LoadedTexture> emissiveTexture;
         std::shared_ptr<LoadedTexture> occlusionTexture;
         std::shared_ptr<LoadedTexture> transmissionTexture; // see KHR_materials_transmission; undefined on specular-gloss materials
@@ -140,6 +141,7 @@ namespace donut::engine
         bool enableMetalRoughOrSpecularTexture = true;
         bool enableNormalTexture = true;
         bool enableEmissiveTexture = true;
+        bool enableLightmapTexture = true;
         bool enableOcclusionTexture = true;
         bool enableTransmissionTexture = true;
 

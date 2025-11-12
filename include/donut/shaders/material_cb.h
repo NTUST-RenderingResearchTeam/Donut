@@ -35,10 +35,11 @@ static const int MaterialFlags_DoubleSided                      = 0x00000002;
 static const int MaterialFlags_UseMetalRoughOrSpecularTexture   = 0x00000004;
 static const int MaterialFlags_UseBaseOrDiffuseTexture          = 0x00000008;
 static const int MaterialFlags_UseEmissiveTexture               = 0x00000010;
-static const int MaterialFlags_UseNormalTexture                 = 0x00000020;
-static const int MaterialFlags_UseOcclusionTexture              = 0x00000040;
-static const int MaterialFlags_UseTransmissionTexture           = 0x00000080;
-static const int MaterialFlags_MetalnessInRedChannel            = 0x00000100;
+static const int MaterialFlags_UseLightmapTexture               = 0x00000020;
+static const int MaterialFlags_UseNormalTexture                 = 0x00000040;
+static const int MaterialFlags_UseOcclusionTexture              = 0x00000080;
+static const int MaterialFlags_UseTransmissionTexture           = 0x00000100;
+static const int MaterialFlags_MetalnessInRedChannel            = 0x00000200;
 
 // NOTE: adjust LoadMaterialConstants(...) in bindless.h when changing this structure
 
@@ -69,7 +70,7 @@ struct MaterialConstants
     int     occlusionTextureIndex;
 
     int     transmissionTextureIndex;
-    int     padding1;
+    int     lightmapTextureIndex;
     int     padding2;
     int     padding3;
 };

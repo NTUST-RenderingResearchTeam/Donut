@@ -50,6 +50,9 @@ namespace donut::engine
         if (emissiveTexture && enableEmissiveTexture)
             constants.flags |= MaterialFlags_UseEmissiveTexture;
 
+        if (lightmapTexture && enableLightmapTexture)
+            constants.flags |= MaterialFlags_UseLightmapTexture;
+
         if (normalTexture && enableNormalTexture)
             constants.flags |= MaterialFlags_UseNormalTexture;
 
@@ -123,7 +126,7 @@ namespace donut::engine
         constants.occlusionTextureIndex = GetBindlessTextureIndex(occlusionTexture);
         constants.transmissionTextureIndex = GetBindlessTextureIndex(transmissionTexture);
 
-        constants.padding1 = 0;
+        constants.lightmapTextureIndex = GetBindlessTextureIndex(lightmapTexture);
         constants.padding2 = 0;
         constants.padding3 = 0;
     }
@@ -148,6 +151,7 @@ namespace donut::engine
         BOOL_PROPERTY(enableMetalRoughOrSpecularTexture);
         BOOL_PROPERTY(enableNormalTexture);
         BOOL_PROPERTY(enableEmissiveTexture);
+        BOOL_PROPERTY(enableLightmapTexture);
         BOOL_PROPERTY(enableOcclusionTexture);
         BOOL_PROPERTY(enableTransmissionTexture);
 #undef FLOAT3_PROPERTY

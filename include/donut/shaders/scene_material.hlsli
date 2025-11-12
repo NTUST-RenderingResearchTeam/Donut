@@ -42,6 +42,7 @@ struct MaterialTextureSample
     float4 emissive;
     float4 occlusion;
     float4 transmission;
+    float4 lightmap;
 };
 
 MaterialTextureSample DefaultMaterialTextures()
@@ -219,6 +220,10 @@ MaterialSample EvaluateSceneMaterial(float3 normal, float4 tangent, MaterialCons
 
     if ((material.flags & MaterialFlags_UseNormalTexture) != 0)
         ApplyNormalMap(result, tangent, textures.normal, material.normalTextureScale);
+
+    result.lightmap = 1.0;
+    if ((material.flags & MaterialFlags_UseLightmapTexture) != 0)
+        result.lightmap = textures.lightmap.rgb;
 
     return result;
 }
