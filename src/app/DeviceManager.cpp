@@ -452,7 +452,7 @@ void DeviceManager::RunMessageLoop()
 {
     m_PreviousFrameTimestamp = glfwGetTime();
 
-    while(!glfwWindowShouldClose(m_Window))
+    while(!glfwWindowShouldClose(m_Window) && !m_RequestExit)
     {
 
         if (m_callbacks.beforeFrame) m_callbacks.beforeFrame(*this);

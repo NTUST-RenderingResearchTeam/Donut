@@ -223,6 +223,7 @@ namespace donut::app
         float m_DPIScaleFactorY = 1.f;
         bool m_RequestedVSync = false;
         bool m_InstanceCreated = false;
+        bool m_RequestExit = false;
 
         double m_AverageFrameTime = 0.0;
         double m_AverageTimeUpdateInterval = 0.5;
@@ -265,6 +266,10 @@ namespace donut::app
         [[nodiscard]] bool IsVsyncEnabled() const { return m_DeviceParams.vsyncEnabled; }
         virtual void SetVsyncEnabled(bool enabled) { m_RequestedVSync = enabled; /* will be processed later */ }
         virtual void ReportLiveObjects() {}
+
+        // Request to exit the render loop
+        void RequestExit() { m_RequestExit = true; }
+        [[nodiscard]] bool IsExitRequested() const { return m_RequestExit; }
         void SetEnableRenderDuringWindowMovement(bool val) {m_EnableRenderDuringWindowMovement = val;} 
 
         // these are public in order to be called from the GLFW callback functions
